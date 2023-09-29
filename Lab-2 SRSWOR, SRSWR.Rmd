@@ -1,0 +1,103 @@
+---
+title: "Lab-2"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+The objective of this assignment is to solve the following problems using R statistical software using appropriate R commands:
+
+Consider a data of your choice of 50 observations and estimate the following.
+1. Select a simple random sample of size 15 units using with and without replacement
+procedure and estimate the sample mean along with the standard deviation for both
+SRSWOR and SRSWR.
+2. Estimate sample mean square for both SRSWOR and SRSWR using the formula.
+3. Prove that sample mean is an unbiased estimate of population mean for both SRSWOR
+and SRSWR.
+4. Prove that sample mean square is an unbiased estimate of population variance in
+SRSWR.
+
+DATASET:
+
+We take 50 random observations with mean 5.6 and variance 0.8 and from the normal distribution using the ‘rnorm’ built-in function as shown below:
+
+```{r}
+#1.Select a simple random sample of size 15 units using with and without replacement procedure and estimate the sample mean along with the standard deviation for both SRSWOR and SRSWR.
+
+#SRSWOR:
+set.seed(77)
+x= rnorm(50,5.6,0.8)
+x
+
+set.seed(77)
+s1 <- sample(x,size = 15) 
+s1
+
+mean(s1)
+
+sd(s1)
+```
+
+
+```{r}
+#SRSWR:
+set.seed(77)
+s2 <- sample(x, size = 15, replace = TRUE)
+s2
+
+mean(s2)
+
+sd(s2)
+```
+
+
+```{r}
+#2.Estimate sample mean square for both SRSWOR and SRSWR using the formula.
+
+#SRSWR 
+a1 = s1^2
+summ.yisq1 = sum(a1)
+b1= 15 * (mean(s1)^2)
+
+sms1 = 1/14 * (summ.yisq1 - b1)  
+sms1                              #sample mean square 
+
+
+#SRSWOR
+a2 = s2^2
+summ.yisq2 = sum(a2)
+b2 = 15* (mean(s2)^2)
+
+sms2 =1/14 * (summ.yisq2 - b2)
+sms2                             #sample mean square
+
+```
+
+
+```{r}
+#3.Prove that sample mean is an unbiased estimate of population mean for both SRSWOR and SRSWR.
+
+mean(s1) 
+mean(x)        #popln mean will be approximately equal to sample mean                      
+
+
+mean(s2)
+mean(x)       #popln mean will be approximately equal to sample mean 
+
+```
+
+
+```{r}
+#4.Prove that sample mean square is an unbiased estimate of population variance in SRSWR.
+popvariance=var(x)    #population variance
+popvariance
+
+a1 = s1^2
+summ.yisq1 = sum(a1)
+b1= 15 * (mean(s1)^2)
+
+sms1 = 1/14 * (summ.yisq1 - b1)  
+sms1                               #sample mean square in case of SRSWR
+
+```
+

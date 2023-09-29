@@ -1,0 +1,228 @@
+---
+title: "Lab-6"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+Introduction:
+
+Stratified sampling is a method of sampling from the population which can be partitioned into subpopulations. Stratified sampling consists of mainly 4 types: equal, proportional, optimum and Neyman allocation. In equal allocation, the total sample size n is divided equally among all the strata. In proportional allocation, the allocation of sample sizes in the respective strata is proportional if the sampling fraction is constant for each stratum. In optimum allocation, the sample sizes in the respective strata are determined with a view to minimise the variance.
+In this experiment, we use R programming to solve a few problems in sampling theory using stratified random sampling (using equal allocation, optimum allocation, & proportional allocation).
+
+Objective:
+
+Consider a dataset of your choice as a population. Divide the population into a number of strata on the basis of suitable variable and estimate the population mean and variance of variable of interest taking a SRSWOR of appropriate size from stratified population and allocate the sample using proportional and optimum allocation. Comment on your results by comparing the results of equal, proportional and optimum allocation
+
+```{r}
+#Importing a dataset from Excel:
+library(readxl)
+
+Sample_Data_Set <- read_excel("C:/Users/nisha/Downloads/Sample Data Set.xlsx")
+
+```
+
+The dataset Sample_Data_Set contains details of 682 patients which includes personal details(like Age,Gender,Religion etc.), and some vital health parameters(like BMI,cortisol levels etc.) before and after a treatment was given to them. The dataset also shows whether a patient died or not after the treatment.
+
+
+```{r}
+#Loading the package:
+library(samplingbook)
+
+mydata <- Sample_Data_Set
+mydata           #displaying the data
+attach(mydata)  #to avoid using $
+```
+
+
+```{r}
+#Consider the dataset Sample_Data_Set and assume that it is the population.
+#We divide the population into strata on the basis of whether a patient died or not and draw a random sample of size 10 from the population by equal allocation and estimate the average age of patients with 95% confidence interval.
+
+#Since there are two possibilities in the Death column(0:represents no death & 1:represents death), the population is divided into two strata and then the sample of size 10 will be allocated to strata using proportional and optimum allocation : stratasamp()
+
+# Obtaining stratum size and stratum standard deviation (N1, N2, S1, S2):
+
+stratum1=mydata[Death==1, ]    #Population in stratum 1
+stratum1                       
+
+N1=sum(stratum1$Death==1)      #Stratum 1 size
+N1                             
+
+mean(stratum1$Age)             #Mean of Age of stratum 1
+
+S1=sqrt(var(stratum1$Age))     #Population standard deviation of stratum 1
+S1                             
+
+```
+
+
+```{r}
+stratum2=mydata[Death==0, ]    #Population in stratum 2
+stratum2  
+
+N2=sum(stratum2$Death==0)      #Stratum 2 size
+N2                             
+
+mean(stratum2$Age)             #Mean of Age of stratum 2
+
+S2=sqrt(var(stratum2$Age))     #Population standard deviation of stratum 2 
+S2                             
+
+```
+
+
+```{r}
+#let the sample of size n=10 has to be drawn using proportional allocation
+sample_size_prop=stratasamp(n=10, Nh=c(N1, N2), Sh=c(S1, S2),type="prop")
+sample_size_prop
+
+```
+
+
+```{r}
+#Allocation of sample of size n=10 using optimum allocation to the strata
+sample_size_opt=stratasamp(n=10, Nh=c(N1, N2), Sh=c(S1, S2),type="opt")
+sample_size_opt
+
+```
+
+
+```{r}
+#Let us collect a random sample using proportional allocation from both strata:
+n1=4
+n2=6  #Sample size allocated using proportional allocation
+
+
+sample1=stratum1[sample(1:nrow(stratum1), n1, replace=FALSE), ]
+sample1 #Sample 1 collected from stratum 1
+
+```
+```{r}
+sample2=stratum2[sample(1:nrow(stratum2), n2, replace=FALSE), ]
+sample2 #Sample 2 collected from stratum 2
+
+```
+
+
+```{r}
+total_sampled_data=rbind(sample1, sample2)
+total_sampled_data #Total sample collected
+
+```
+
+
+```{r}
+#Estimation of population mean using stratified random sample:
+nh=as.vector(table(total_sampled_data$Death))
+nh             #Vector of sizes of every stratum
+
+
+wh=nh/sum(nh)
+wh             #Vector of weights of every stratum
+
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death),wh=wh)
+
+#Extensive output for each and every stratum:
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death), wh=wh, eae=TRUE)
+
+n=10
+SE_prop =4.7488
+var_prop = (SE_prop^2)* n
+var_prop
+
+```
+
+Interpretation: The estimated average age of patients obtained using proportional allocation of sample of size 10 to strata is 59.6 with the SE of 4.7488 and the 95% confidence interval is [50.2926,68.9074], i.e that means for approximately 95% of the samples of same size coming from the same population with same procedure of sample selection, the mean age of patient will lie in the interval [50.2926,68.9074]. Similarly, the estimated values for each stratum can be interpreted and comparison can also be done in the estimates of each stratum. Also, the estimated variance of the age of the population is 225.511
+
+```{r}
+#Let us collect a random sample using optimum allocation from both strata:.
+n3=3
+n4=7  #sample size allocated using optimum allocation
+
+sample3=stratum1[sample(1:nrow(stratum1), n3, replace=FALSE), ]
+sample3 #Sample3 collected from stratum 1
+
+```
+
+
+```{r}
+sample4=stratum2[sample(1:nrow(stratum2), n4, replace=FALSE), ]
+sample4 #Sample 4 collected from stratum 2
+
+```
+
+```{r}
+total_sampled_data=rbind(sample3, sample4)
+total_sampled_data #Total sample collected
+
+```
+
+
+```{r}
+#Estimation of population mean using stratified random sample:
+nh=as.vector(table(total_sampled_data$Death))
+nh             #Vector of sizes of every stratum
+
+wh=nh/sum(nh)
+wh             #Vector of weights of every stratum
+
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death),wh=wh)
+
+#Extensive output for each and every stratum:
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death), wh=wh, eae=TRUE)
+
+n=10
+SE_prop =4.7488
+var_prop = (SE_prop^2)* n
+var_prop
+
+```
+Interpretation: The estimated average age of patients obtained using proportional allocation of sample of size 10 to strata is 51.5 with the SE of 4.5957 and the 95% confidence interval is [42.4927,60.5073], i.e that means for approximately 95% of the samples of same size coming from the same population with same procedure of sample selection, the mean age of patient will lie in the interval [42.4927,60.5073]. Similarly, the estimated values for each stratum can be interpreted and comparison can also be done in the estimates of each stratum. Also, the estimated variance of the age of the population is 225.511.
+
+```{r}
+#Let us collect a random sample using equal allocation from both strata i.e.
+n5=5
+n6=5  #sample size allocated using equal allocation
+
+sample5=stratum1[sample(1:nrow(stratum1), n5, replace=FALSE), ]
+sample5 #Sample 5 collected from stratum 1
+
+
+```
+
+
+```{r}
+sample6=stratum2[sample(1:nrow(stratum2), n6, replace=FALSE), ]
+sample6 #Sample 6 collected from stratum 2
+
+```
+
+```{r}
+total_sampled_data=rbind(sample5, sample6)
+total_sampled_data #Total sample collected
+
+```
+
+```{r}
+#Estimation of population mean using stratified random sample:
+nh=as.vector(table(total_sampled_data$Death))
+nh             #Vector of sizes of every stratum
+
+wh=nh/sum(nh)
+wh             #Vector of weights of every stratum
+
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death),wh=wh)
+
+#Extensive output for each and every stratum:
+stratamean(y=total_sampled_data$Age, h=as.vector(total_sampled_data$Death), wh=wh, eae=TRUE)
+
+n=10
+SE_eq =4.4091
+var_eq = (SE_eq^2)* n
+var_eq
+
+```
+
+Interpretation: The estimated average age of patients obtained using equal allocation of sample of size 10 to strata is 57.5 with the SE of 3.5242 and the 95% confidence interval is [50.5927,64.4073], i.e that means for approximately 95% of the samples of same size coming from the same population with same procedure of sample selection, the mean age of patient will lie in the interval [50.5927,64.4073]. Similarly, the estimated values for each stratum can be interpreted and comparison can also be done in the estimates of each stratum. Also, the estimated variance of the age of the population is 194.4016.
+

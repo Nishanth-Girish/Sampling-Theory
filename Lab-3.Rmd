@@ -1,0 +1,69 @@
+---
+title: "Lab-3"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+The objective of this assignment is to solve the following problems using R statistical software using appropriate R commands:
+Take a data of your choice and consider it as population.
+1. Draw a random sample of any size which is suitable to you using with replacement procedure and give an estimate for population parameters mean and variance with confidence intervals.  
+2. Obtain the sampling distribution of the sample mean and represent it by a histogram.
+Comment on its nature.
+3. Prove that sample mean is an unbiased estimate of the population mean
+4. Verify that variance of the estimate is minimum in SRSWOR than the SRSWR(use formulae to calculate the variances in both cases SRSWOR and SRSWR by taking a sample of the same size and compare the variances) 
+
+
+```{r}
+#1. Drawing a random sample with replacement.
+
+set.seed(123)
+x=rnorm(35,5.6,0.8)   
+x                      #population
+
+
+s1=sample(x,size = 10, replace = TRUE)
+s1                                        #sample
+
+mean(s1)                     #sample mean
+
+pop_mean= mean(x)           #population mean
+pop_mean
+
+
+a1 = s1^2                   #sample mean square 
+summ.yisq = sum(a1)
+b1= 10 * (mean(s1)^2)
+
+
+sms = 1/9 * (summ.yisq - b1)  
+sms 
+
+var(x)                      #population variance 
+
+#Confidence interval for the mean.
+#alpha = 5%
+ll_CI=mean(s1)- 1.96*(sd(s1)/sqrt(length(s1)))  #confidence interval formula.
+ll_CI                                           #lower limit
+
+ul_CI=mean(s1)+ 1.96*(sd(s1)/sqrt(length(s1)))
+ul_CI                                           #upper limit
+
+CI = c(ll_CI,ul_CI)
+CI
+```
+
+We observe that the sample mean and population mean are approximately equal and it lies in the confidence interval for mean. The 95% confidence interval for mean is [4.998009, 6.229333].
+
+```{r}
+#2. Sampling distribution of the sample mean.
+
+
+samp_dist <- replicate(10000,mean(sample(x,10, replace = TRUE)))
+mean(samp_dist)
+
+
+hist(samp_dist)
+```
+
+We observe that the mean of the sampling distribution is approximately equal to the population mean and sample mean.

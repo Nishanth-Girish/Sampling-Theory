@@ -1,0 +1,75 @@
+---
+title: "Lab-7"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+Take a data of your choice and consider it as the population.
+1. Draw a simple random sample of any size which is suitable for you using without replacement (SRSWOR) procedure and give an estimate for population parameters mean, variance and SE.  
+2. Estimate the confidence interval for the population mean.
+3. Obtain the sampling distribution of the sample mean. Represent the distribution graphically and comment on it.
+4. Prove that sample mean is an unbiased estimate of the population mean in SRSWOR.
+
+```{r}
+#1.Drawing a simple random sample without replacement and estimating population parameters:
+set.seed(77)
+x <- rnorm(50,5.6, 0.8)        #population
+x
+```
+
+
+```{r}
+s1 <- sample(x, size= 10)     #SRSWOR
+s1
+
+```
+
+
+```{r}
+mean(s1)              #sample mean is an estimate of population mean
+
+sms<-(1/length(s1))*sum((s1- mean(s1))^2)  #sample mean square is an estimate of population mean square in SRSWOR
+sms
+
+pop_var = var(x)           #population variance
+pop_var
+
+#std error:
+se <- sd(x)/sqrt(length(x))
+se
+
+```
+Here, we obtained a simple random sample without replacement of size 50 from the normal distribution with mean 5.6 and variance 0.8. We also obtained a few population parameters.
+
+```{r}
+#2.Confidence interval for mean. Alpha = 5%
+ll_CI <- mean(s1) - 1.96*(sd(s1)/length(s1)) #lower confidence limit
+ul_CI <- mean(s1) + 1.96*(sd(s1)/length(s1)) #upper confidence limit
+
+CI <- c(ll_CI,ul_CI)
+CI
+
+```
+The 95% confidence interval for the population mean is given by [5.2502233, 5.602961].
+
+```{r}
+#3.Sampling distribution of the sample mean 
+samp_dist <- replicate(10000,mean(sample(x,10, replace = FALSE)))
+mean(samp_dist)
+
+hist(samp_dist)      #histogram of the sampling distribution
+
+```
+
+We obtain the sampling distribution of the sample mean and represented it graphically in the form of a histogram. The histogram is a bell-shaped curve.
+
+```{r}
+#4.Sample mean is an unbiased estimate of population mean:
+mean(s1)        #sample mean
+
+mean(x)         #population mean
+
+```
+
+We observe that the sample mean is approximately equal to the population mean. Hence, we conclude that sample mean is an unbiased estimate of population mean.

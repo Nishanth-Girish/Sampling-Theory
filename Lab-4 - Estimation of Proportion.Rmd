@@ -1,0 +1,80 @@
+---
+title: "Lab-4"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+The objective of this assignment is to solve the following problems using R statistical software using appropriate R commands:
+
+Consider a dataset of your choice and do the analysis for sampling for proportions and write a report on it.
+
+```{r}
+#Importing a dataset from Excel:
+library(readxl)
+
+Sample_Data_Set <- read_excel("C:/Users/nisha/Downloads/Sample Data Set.xlsx")
+```
+
+The dataset Sample_Data_Set contains details of 682 patients which includes personal details and some vital health parameters (like BMI, cortisol levels etc) before and after a treatment was given to them. The dataset also shows whether a patient died or not after the treatment. The variable of interest is the Death column. We are estimating the proportion of deaths of patients in the sample and using it we are estimating the total number of deaths in the entire population.
+
+```{r}
+#Loading the package:
+library(samplingbook)
+
+mydata <- Sample_Data_Set
+mydata           #displaying the data
+attach(mydata)  #to avoid using $ 
+```
+
+
+```{r}
+#Consider the dataset Sample_Data_Set and assume that it is the population.
+#Estimate the proportion of deaths of people who underwent the treatment (0:represents no death & 1:represents death) by taking a random sample using without replacement(SRSWOR) procedure.Also, give the estimate for the total number of deaths among the population.
+
+N = length(Death)
+N
+
+set.seed(77) 
+
+#Select a random sample of size 25 using SRSWOR
+s1=mydata[sample(1:682, 25, replace=FALSE), ]
+s1
+
+```
+
+
+```{r}
+set.seed(77) 
+
+#Select a random sample of size 25 using SRSWOR
+s1=mydata[sample(1:682, 25, replace=FALSE), ]
+s1
+
+```
+```{r}
+#no of deaths in the sample
+deaths <- sum(s1$Death==1)
+deaths
+
+```
+
+
+```{r}
+#To obtain the estimates for proportions, we will use the function Sprop()
+Sprop(y=s1$Death,m=deaths, n=length(s1$Death), N=682, level=0.95)
+
+```
+
+Interpretation: From the result, the estimated proportion of deaths of patients is 0.32 with the standard error of 0.0935 and the 95% confidence interval for the population proportion is [0.1368, 0.5032] that means for approximately 95% of the samples of same size coming from the same population with same procedure of sample selection, the proportion of cars with straight type engine will lie in the interval [0.1368, 0.5032].
+
+```{r}
+#estimate of the total number of deaths i.e. N*p
+N=682   #population size
+p=0.32  #proportion of deaths in the sample
+
+N*p     #estimate of total number of deaths in the population
+
+```
+
+There are approximately 218 deaths in the given population.

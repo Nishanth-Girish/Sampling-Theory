@@ -1,0 +1,99 @@
+---
+title: "Lab-8"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+Example on stratified random sampling
+Consider the mtcars dataset as a population, divide the population
+into strata on the basis of type of engine used in cars and draw a random
+sample of size 10 from the population by equal allocation and estimate the
+average mpg of cars with 95% confidence interval. 
+
+```{r}
+library(samplingbook)
+
+```
+
+
+```{r}
+attach(mtcars)
+#Since there are two types of engines in the cars so population is divided into two strata i.e. vs=1 and vs=0 and then the sample of size 10 will be allocated to strata using equal allocation : stratasamp()
+# Obtaining stratum size and stratum standard deviation (N1, N2, S1, S2)
+stratum1=mtcars[mtcars$vs==1, ]
+stratum1 #population in stratum 1
+
+N1=sum(stratum1$vs==1)
+N1 # stratum1 size
+## [1] 14
+S1=sqrt(var(stratum1$mpg))
+S1 # population standard deviation of stratum 1
+```
+
+
+```{r}
+stratum2=mtcars[mtcars$vs==0, ]
+stratum2 #population in stratum 2
+```
+
+
+```{r}
+mean(stratum1$mpg) # mean of mpg of stratum 1
+
+mean(stratum2$mpg) # mean of mpg of stratum 2
+
+```
+
+
+```{r}
+N2=sum(stratum2$vs==0)
+N2 # stratum2 size
+
+S2=sqrt(var(stratum2$mpg))
+S2 # population standard deviation of stratum 2
+```
+
+
+```{r}
+# The sample of size n=10 has to be drawn using equal allocation using SRSWOR.i.e.
+n1=5
+n2=5
+sample1=stratum1[sample(1:nrow(stratum1), 5, replace=FALSE), ]
+sample1 # sample 1 collected from stratum 1
+```
+
+
+```{r}
+sample2=stratum2[sample(1:nrow(stratum2), 5, replace=FALSE), ]
+sample2 # sample 2 collected from stratum 2
+```
+
+
+```{r}
+total_sampled_data=rbind(sample1, sample2)
+total_sampled_data # total sample collected using stratified random sampling
+```
+
+
+```{r}
+# Estimation of population mean i.e. mean mpg using stratified random sample: stratamean()
+nh=as.vector(table(total_sampled_data$vs))
+nh
+
+wh=nh/sum(nh)
+wh
+
+stratamean(y=total_sampled_data$mpg, h=as.vector(total_sampled_data$vs), wh=wh)
+
+#Extended
+stratamean(y=total_sampled_data$mpg, h=as.vector(total_sampled_data$vs), wh=wh, eae=TRUE)
+```
+Conclusion: the estimated average mgp of cars obtained using equal allocation
+of sample of size 10 to strata is 20.86 per gallon with the SE of 1.72 and
+the 95% confidence interval is [17.4905,24.2295] means on an average, the
+minimum millage of cars can be 17.49 per gallon and the maximum millage of
+cars can be 24.23 per gallon with .95 confidence coefficient. Similarly, the
+estimated values for each stratum can be interpreted and comparison can also
+be done in estimated of each stratum.
+

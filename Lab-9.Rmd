@@ -1,0 +1,127 @@
+---
+title: "Lab-9"
+author: "Nishanth Girish"
+date: "2023-09-29"
+output: word_document
+---
+
+Consider the mtcars dataset as a population, divide the population into strata on the basis of type of engine used in cars and draw a random sample of size 10 from the population by proportional and optimum allocation and estimate the average mpg of cars with 95% confidence interval. 
+
+
+```{r}
+library(samplingbook)
+```
+
+
+```{r}
+attach(mtcars) 
+```
+
+
+```{r}
+#Allocation of sample size to strata using proportional and optimum allocation: stratasamp()
+# Obtaining stratum size and stratum standard deviation (N1, N2, S1, S2)
+stratum1=mtcars[mtcars$vs==1, ]
+stratum1
+
+N1=sum(stratum1$vs==1)
+N1 # size of stratum 1
+
+S1=sqrt(var(stratum1$mpg))
+S1 #SD of stratum 1
+
+```
+
+
+```{r}
+stratum2=mtcars[mtcars$vs==0, ]
+stratum2
+
+N2=sum(stratum2$vs==0)
+N2
+
+S2=sqrt(var(stratum2$mpg))
+S2
+
+```
+
+
+```{r}
+mean(stratum1$mpg) 
+
+mean(stratum2$mpg)
+
+```
+
+
+```{r}
+#let the sample of size n=10 has to be drawn using proportional allocation
+sample_size_prop=stratasamp(n=10, Nh=c(N1, N2), Sh=c(S1, S2),type="prop")
+sample_size_prop                        
+
+```
+
+
+```{r}
+#Allocation of sample of size n=10 using optimum allocation to the strata
+sample_size_opt=stratasamp(n=10, Nh=c(N1, N2), Sh=c(S1, S2),type="opt")
+sample_size_opt
+
+```
+
+
+```{r}
+#Allocation of sample of size n=10 using cost optimum allocation to the strata, 200 and 500 rupees are the cost per unit in stratum 1 and 2 respectively           
+sample_size_costopt=stratasamp(n=10, Nh=c(N1, N2), Sh=c(S1, S2),
+                       Ch=c(200,500), type="costopt")
+sample_size_costopt
+
+```
+
+
+```{r}
+#Let we want to collect a random sample using cost optimum allocation from both strata i.e.
+n1=6
+n2=4 # sample size allocated using cost optimum
+
+sample1=stratum1[sample(1:nrow(stratum1), n1, replace=FALSE), ]
+sample1 # sample 1 collected from stratum 1
+
+```
+
+
+```{r}
+sample2=stratum2[sample(1:nrow(stratum2), n2, replace=FALSE), ]
+sample2 # sample 1 collected from stratum 2
+
+
+```
+```{r}
+total_sampled_data=rbind(sample1, sample2)
+total_sampled_data # total sample collected using stratified random sampling with cost optimum allocation
+
+```
+
+
+```{r}
+#with cost optimum allocation
+
+
+# Estimation of population mean using stratified random sample
+nh=as.vector(table(total_sampled_data$vs))
+nh
+## [1] 4 6
+wh=nh/sum(nh)
+wh
+## [1] 0.4 0.6
+stratamean(y=total_sampled_data$mpg, h=as.vector(total_sampled_data$vs), wh=wh)
+
+#Extended
+stratamean(y=total_sampled_data$mpg, h=as.vector(total_sampled_data$vs), wh=wh,  eae=TRUE)
+
+```
+
+
+```{r}
+```
+
